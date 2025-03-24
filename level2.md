@@ -195,7 +195,8 @@ whole lifecycle of your application:
 
 ### Docker-compose.yml syntax
 
-```version: '3.7'  # Version 3.7 is required for configs and secrets
+```
+version: '3.7'  # Version 3.7 is required for configs and secrets
 
 services:
 app:

@@ -5,12 +5,11 @@ ARG name=script
 # install app dependencies
 RUN apt-get update && apt-get install -y python3 python3-pip
 
-WORKDIR /app
+RUN pip install flask==3.0.*
 
+WORKDIR /app
 COPY $name.py .
 ADD Readme.md .
-
-RUN pip install flask==3.0.*
 
 
 ENV FLASK_APP=$name

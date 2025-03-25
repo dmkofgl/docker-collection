@@ -193,57 +193,77 @@ whole lifecycle of your application:
 - Stream the log output of running services
 - Run a one-off command on a service
 
-### Docker-compose.yml syntax
+### [Docker-compose.yml syntax](https://github.com/compose-spec/compose-spec/blob/main/spec.md)
+
+The default path for a Compose file is `compose.yaml` (preferred) or compose.yml that is placed in the working directory. Compose also
+supports `docker-compose.yaml` and `docker-compose.yml` for backwards compatibility of earlier versions. If both files exist, Compose
+prefers
+the canonical `compose.yaml`.
+
+Compose validates whether it can fully parse the Compose file. If some fields are unknown, typically because the Compose file was written
+with fields defined by a newer version of the Specification, you'll receive a warning message. Compose offers options to ignore unknown
+fields (as defined by "loose" mode).
+
+The Compose file is a YAML file defining:
+
+- Version (Optional)
+- Services (Required)
+- Networks
+- Volumes
+- Configs
+- Secrets
 
 ```
 version: '3.7'  # Version 3.7 is required for configs and secrets
 
 services:
-app:
-image: myapp:latest
-ports:
-- "8080:80"
-environment:
-- VAR_NAME=value
+  app:
+    image: myapp:latest
+    ports:
+      - "8080:80"
+    environment:
+      - VAR_NAME=value
+    volumes:
+      - ./data:/data
+    configs:
+      - source: app_config
+        target: /etc/app/config.yml
+    secrets:
+      - app_secret
+    networks:
+      - app_network
+
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    secrets:
+      - db_password
+    networks:
+      - app_network
+
 volumes:
-- ./data:/data
+  db_data: {}
+
 configs:
-- source: app_config
-target: /etc/app/config.yml
-secrets:
-- app_secret
-networks:
-- app_network
-
-db:
-image: postgres:latest
-environment:
-- POSTGRES_USER=myuser
-- POSTGRES_PASSWORD=mypassword
-volumes:
-- db_data:/var/lib/postgresql/data
-secrets:
-- db_password
-networks:
-- app_network
-
-volumes:
-db_data: {}
-
-configs:
-app_config:
-file: ./config/app_config.yml  # Path to the config file on your host machine
+  app_config:
+    file: ./config/app_config.yml  # Path to the config file on your host machine
 
 secrets:
-app_secret:
-file: ./secrets/app_secret.txt  # Path to the secret file on your host machine
-db_password:
-file: ./secrets/db_password.txt  # Path to the secret file on your host machine
+  app_secret:
+    file: ./secrets/app_secret.txt  # Path to the secret file on your host machine
+  db_password:
+    file: ./secrets/db_password.txt  # Path to the secret file on your host machine
 
 networks:
-app_network:
-driver: bridge
+  app_network:
+    driver: bridge
+
 ```
+
 
 ### CLI basics: up, down, start, stop
 

@@ -1,0 +1,17 @@
+ARG name="JOE"
+FROM ubuntu:22.04 as base
+
+WORKDIR /app
+# $name is empty
+RUN echo "Hello $name"> first.txt
+# load from global
+ARG name
+
+RUN echo "Hello $name"> second.txt
+
+ENTRYPOINT ["cat", "first.txt", "second.txt"]
+
+FROM base as stage1
+
+RUN echo "Hello $name"> third.txt
+ENTRYPOINT ["cat",  "third.txt"]

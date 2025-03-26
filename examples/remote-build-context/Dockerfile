@@ -1,3 +1,3 @@
 FROM busybox
 
-ENTRYPOINT ["echo", "Hello"]
+ENTRYPOINT ["ls", "-R"]

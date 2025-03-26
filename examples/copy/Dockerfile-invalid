@@ -1,0 +1,9 @@
+FROM busybox
+
+WORKDIR ~/example
+
+
+COPY https://github.com/dmkofgl/docker-collection/blob/master/examples/copy/folder/c.txt ./github/
+
+
+ENTRYPOINT ["ls", "-R"]

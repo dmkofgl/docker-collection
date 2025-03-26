@@ -12,6 +12,7 @@ RUN echo "Hello $name"> second.txt
 ENTRYPOINT ["cat", "first.txt", "second.txt"]
 
 FROM base as stage1
-
+# already initialized
 RUN echo "Hello $name"> third.txt
+
 ENTRYPOINT ["cat",  "third.txt"]

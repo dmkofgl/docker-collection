@@ -5,3 +5,8 @@ docker stop $containerName
 docker rm $containerName
 
 docker rmi nginx
+
+docker ps
+
+docker stats
+

@@ -6,6 +6,7 @@ docker volume create $volumeName
 docker build -t testing .
 docker run --rm -v $volumeName:/base testing
 docker run --rm -it --name test-vol -v $volumeName:/world ubuntu ls -lR world/
+docker run --rm --mount type=volume,src=$volumeName,dst=/data,ro ubuntu ls -lR data/
 
 docker volume inspect $volumeName
 

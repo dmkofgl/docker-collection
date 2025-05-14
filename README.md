@@ -4,6 +4,24 @@
 
 1. [What is docker](#what-is-docker)
 1. [High-level architecture](#high-level-architecture)
+1. Key docker objects
+    1. Image
+    2. Container
+    3. Registry
+1. Image building
+    1. Dockerfile basic syntax: FROM, ARG, ENV, RUN, EXPOSE, WORKDIR, ADD, COPY, ENTRYPOINT
+    2. Dockerignore
+    3. Multi-stage builds
+1. CLI basics: build, run, stop, image, volume, ps, stats
+
+1. Application data management
+    1. Volumes
+    1. Bind mounts
+1. Networking overview
+    1. Network drives
+       1. Bridge
+       1. Host
+   1. Port publishing
 
 ## What is docker
 
@@ -252,6 +270,7 @@ docker image build
 docker buildx b
 
 ``docker buildx build -f <filepath> .``
+
 tag format ``[HOST[:PORT_NUMBER]/]PATH[:TAG]``
 
 - HOST: The optional registry hostname where the image is located. If no host is specified, Docker's public registry at docker.io is used by
@@ -263,6 +282,8 @@ tag format ``[HOST[:PORT_NUMBER]/]PATH[:TAG]``
 - TAG: A custom, human-readable identifier that's typically used to identify different versions or variants of an image. If no tag is
   specified, latest is used by default.
   ``docker/welcome-to-docker``, equivalent to ``docker.io/docker/welcome-to-docker:latest``
+
+
   ``docker build -t my-username/my-image .``
 
 ### run
@@ -477,11 +498,12 @@ for you. To do so, simply omit the HOST_PORT configuration.
 
 Once the container is running, using docker ps will show you the port that was chosen.
 
-When creating a container image, the EXPOSE instruction is used to indicate the packaged application will use the specified port. These ports aren't published by default.
+When creating a container image, the EXPOSE instruction is used to indicate the packaged application will use the specified port. These
+ports aren't published by default.
 
-With the -P or --publish-all flag, you can automatically publish all exposed ports to ephemeral ports. This is quite useful when you’re trying to avoid port conflicts in development or testing environments.
+With the -P or --publish-all flag, you can automatically publish all exposed ports to ephemeral ports. This is quite useful when you’re
+trying to avoid port conflicts in development or testing environments.
 
 For example, the following command will publish all of the exposed ports configured by the image:
-
 
 ``docker run -P nginx``

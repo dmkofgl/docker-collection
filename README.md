@@ -201,7 +201,7 @@ CMD ["/bin/hello"]
 
 You only need the single Dockerfile. No need for a separate build script. Just run docker build.
 
-docker build -t hello .
+``docker build -t hello .``
 
 The end result is a tiny production image with nothing but the binary inside. None of the build tools required to build the application are
 included in the resulting image.
@@ -257,7 +257,7 @@ With BuildKit enabled, building the stage2 target in this Dockerfile means only 
 stage1, so it's skipped. On the other hand, building the same target without BuildKit results in all stages being processed. The legacy
 builder processes stage1, even if stage2 doesn't depend on it.
 
-## CLI basics: build, run, stop, image, volume, ps, ps
+## CLI basics: build, run, stop, image, volume, ps, stats
 
 ### build
 

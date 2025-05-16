@@ -1,0 +1,39 @@
+include:
+  - docker-compose-import-file.yaml
+services:
+  service-a:
+    image: ubuntu
+    environment:
+      - "ENV_1=qwerty"
+      - "ENV_2=ytrewq"
+#      env_3: qwerty
+      #From .env file
+#      - OUT_FILE_VALUE
+    secrets:
+      - source: top_secret
+        target: /etc/app/my_real_secret
+    networks:
+      - test_network
+    volumes:
+      - test_volume:/vol
+    configs:
+      - source: app_config
+        target: /etc/app/config.yml
+
+    entrypoint: sh -c "tail -f /dev/null"
+#    command:
+#      - "${ENV_1} and $ENV_2 and $OUT_FILE_VALUE and $top_secret"
+
+volumes:
+  test_volume: { }
+
+networks:
+  test_network:
+    driver: bridge
+
+secrets:
+  top_secret:
+    file: ./secret.txt
+configs:
+  app_config:
+    file: ./config.txt

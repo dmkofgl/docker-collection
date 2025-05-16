@@ -1,0 +1,11 @@
+services:
+  service-b:
+    image: alpine
+    environment:
+      - "ENV_3=qazwsx"
+    secrets:
+      - top_secret
+    networks:
+      - test_network
+    volumes:
+      - test_volume:/vol

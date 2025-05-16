@@ -1,0 +1,77 @@
+services:
+  logger-local:
+    image: alpine
+    logging:
+      driver: local
+      options:
+        max-size: 30k
+        max-file: 3
+        compress: "true"
+    entrypoint: >
+      sh -c "while true; do echo Random: $(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8); sleep 5; done"
+
+  syslog-server:
+    image: balabit/syslog-ng:latest
+    container_name: syslog-server
+    ports:
+      - "514:514/udp"
+    volumes:
+      - ./syslog-ng.conf:/etc/syslog-ng/syslog-ng.conf:ro
+      - ./logs/syslog:/var/log/syslog-ng
+    restart: unless-stopped
+  logger-syslog:
+    image: alpine
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://host.docker.internal:514"
+        tag: "{{.Name}}/{{.ID}}"
+    depends_on:
+      - syslog-server
+    entrypoint: >
+      sh -c "while true; do echo Random: $(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8); sleep 5; done"
+
+  fluentd-server:
+    image: fluent/fluentd
+    container_name: fluentd
+    ports:
+      - "24224:24224"       # Fluentd forward input (TCP)
+      - "24224:24224/udp"   # Fluentd forward input (UDP)
+    volumes:
+#      - ./fluentd.conf:/fluentd/etc/fluent.conf:ro
+      - ./logs/fluentd:/fluentd/log
+    restart: unless-stopped
+  logger-fluentd:
+    image: alpine
+    logging:
+      driver: fluentd
+      options:
+        #        tag: "docker.{{.Name}}/{{.ID}}"
+        fluentd-address: host.docker.internal:24224
+    depends_on:
+      - fluentd-server
+    entrypoint: >
+      sh -c "while true; do echo Random: $(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8); sleep 5; done"
+
+
+  logstash-server:
+    image: docker.elastic.co/logstash/logstash:8.13.4
+    container_name: logstash
+    ports:
+      - "12201:12201/udp"   # GELF over UDP
+      - "9600:9600"         # Logstash monitoring API (optional)
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+    restart: unless-stopped
+  logger-gelf:
+    image: alpine
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://host.docker.internal:12201"
+        tag: "logger-app"
+    depends_on:
+      - logstash-server
+    entrypoint: >
+      sh -c "while true; do echo Random: $(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8); sleep 5; done"
+
